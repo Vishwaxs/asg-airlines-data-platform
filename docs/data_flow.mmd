@@ -1,0 +1,30 @@
+flowchart TD
+    A[flights 1,020<br/>bookings 1,000<br/>payments 1,000<br/>passengers 1,039]
+
+    A --> B[ingest<br/>4,059 rows stamped with<br/>run_id, ingested_at, row_hash]
+    B --> C[validate<br/>26 declarative rules<br/>0 error-severity failures<br/>205 warning flags]
+
+    C --> D{clean}
+    D -->|flights| D1[duration recomputed<br/>1 arrival rolled forward<br/>15 exact duplicates collapsed]
+    D -->|flights| D2[6F250: 2 rows quarantined<br/>conflicting_duplicate_key]
+    D -->|bookings| D3[status null to UNKNOWN 45<br/>INVALID kept as INVALID 30<br/>all 1,000 retained]
+    D -->|payments| D4[amount_quality<br/>valid 922, missing 48,<br/>non_numeric 30]
+    D -->|passengers| D5[1,039 to 1,000<br/>survivorship on 36 groups<br/>Aadhaar zfill then HMAC]
+
+    D1 --> E[silver 4,003 rows]
+    D3 --> E
+    D4 --> E
+    D5 --> E
+    D2 --> QQ[(quarantine 2 rows)]
+
+    E --> F[model<br/>5 dimensions, 3 facts]
+    F --> G[fact_flight 1,003 + unknown member<br/>fact_booking 1,000<br/>fact_payment 1,000]
+    G --> H[(DuckDB warehouse)]
+    G --> I[22 gold CSV extracts]
+    H --> I
+    I --> J[Power BI]
+
+    classDef step fill:#eef2f7,stroke:#5b7ea6,color:#1b2a3a
+    classDef bad fill:#f9ecec,stroke:#a65b5b,color:#3a1b1b
+    class B,C,D1,D3,D4,D5,E,F,G,H,I step
+    class D2,QQ bad

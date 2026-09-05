@@ -1,0 +1,76 @@
+erDiagram
+    dim_date {
+        int date_key PK
+        date date
+        smallint year
+        tinyint quarter
+        tinyint month
+        varchar month_name
+        varchar day_name
+        boolean is_weekend
+    }
+    dim_airline {
+        int airline_key PK
+        varchar airline_name UK
+        boolean is_unknown
+    }
+    dim_route {
+        int route_key PK
+        varchar source
+        varchar destination
+        varchar route_label UK
+    }
+    dim_status {
+        int status_key PK
+        varchar status UK
+        boolean is_valid
+    }
+    dim_passenger {
+        varchar passenger_sk PK
+        varchar passenger_id UK
+        smallint age
+        varchar age_band
+        varchar gender
+        varchar masked_name
+        varchar masked_email
+        varchar masked_phone
+        boolean is_minor
+    }
+    fact_flight {
+        int flight_sk PK
+        varchar flight_id
+        int airline_key FK
+        int route_key FK
+        int departure_date_key FK
+        timestamp departure_ts
+        double duration_minutes
+        boolean is_overnight
+        boolean is_red_eye
+        boolean was_corrected
+    }
+    fact_booking {
+        int booking_sk PK
+        varchar booking_id UK
+        int flight_sk FK
+        varchar passenger_sk FK
+        int status_key FK
+        int booking_date_key FK
+        varchar seat_number
+    }
+    fact_payment {
+        int payment_sk PK
+        varchar payment_id UK
+        int booking_sk FK
+        double amount
+        varchar payment_method
+        varchar amount_quality
+    }
+
+    dim_airline   ||--o{ fact_flight  : "airline_key"
+    dim_route     ||--o{ fact_flight  : "route_key"
+    dim_date      ||--o{ fact_flight  : "departure_date_key (inactive in Power BI)"
+    dim_date      ||--o{ fact_booking : "booking_date_key (active in Power BI)"
+    dim_status    ||--o{ fact_booking : "status_key"
+    dim_passenger ||--o{ fact_booking : "passenger_sk"
+    fact_flight   ||--o{ fact_booking : "flight_sk, -1 = quarantined flight"
+    fact_booking  ||--o{ fact_payment : "booking_sk, payments never join to flights"

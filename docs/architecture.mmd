@@ -1,0 +1,43 @@
+flowchart LR
+    subgraph source[Source]
+        XL[UseCase_Airlines.xlsx<br/>4 sheets, 4,059 rows]
+    end
+
+    subgraph local[Single-node platform]
+        direction TB
+        B[(bronze<br/>parquet<br/>raw + lineage stamps)]
+        S[(silver<br/>parquet<br/>typed, deduped, tokenised)]
+        Q[(quarantine<br/>csv, PII-free)]
+        G[(gold<br/>star schema)]
+        W[(DuckDB warehouse<br/>asg_airlines.duckdb)]
+        C[gold CSV extracts]
+    end
+
+    subgraph cloud[Azure]
+        BLOB[ADLS Gen2<br/>container per layer]
+        ADF[Data Factory<br/>copy pipeline]
+        KV[Key Vault<br/>PII pepper]
+    end
+
+    PBI[Power BI<br/>4 report pages]
+
+    XL -->|ingest| B
+    B -->|validate: declarative rules| B
+    B -->|clean: correct, dedupe, tokenise| S
+    B -.->|rows that cannot be arbitrated| Q
+    S -->|model: star schema| G
+    G --> W
+    G --> C
+    C --> PBI
+    W -->|kpi views| C
+
+    B -.-> BLOB
+    S -.-> BLOB
+    G -.-> BLOB
+    ADF -.-> BLOB
+    KV -.->|pepper at runtime| S
+
+    classDef layer fill:#eef2f7,stroke:#5b7ea6,color:#1b2a3a
+    classDef ext fill:#f7f3ee,stroke:#a68b5b,color:#3a2f1b
+    class B,S,G,W,C,Q layer
+    class BLOB,ADF,KV,PBI ext
