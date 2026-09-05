@@ -1,0 +1,209 @@
+// ASG Airlines - DAX measures
+//
+// Paste into a measure table (Modeling > New Table > Measures = {BLANK()}, then hide the
+// column), or onto the fact table each measure belongs to. Every measure below is reproduced
+// by a view in sql/03_kpi_views.sql, so the report and the warehouse can be checked against
+// each other.
+//
+// Two rules hold throughout:
+//   1. fact_flight[flight_sk] = -1 is the unknown member standing in for the quarantined
+//      6F250. It is excluded from every flight count, and its duration is blank so averages
+//      ignore it anyway.
+//   2. Revenue is only ever summed from fact_payment. Never build a revenue measure that
+//      filters or sums across a flight join - that is the 1,404-row fan-out.
+
+// ---------------------------------------------------------------------------
+// Page 1 - Executive Overview
+// ---------------------------------------------------------------------------
+
+Total Flights =
+CALCULATE (
+    COUNTROWS ( fact_flight ),
+    fact_flight[flight_sk] <> -1
+)
+
+Total Bookings = COUNTROWS ( fact_booking )
+
+Total Passengers = COUNTROWS ( dim_passenger )
+
+Booked Passengers = DISTINCTCOUNT ( fact_booking[passenger_sk] )
+
+Avg Duration (min) = AVERAGE ( fact_flight[duration_minutes] )
+
+Duration Sigma (min) = STDEV.S ( fact_flight[duration_minutes] )
+
+Gross Revenue = SUM ( fact_payment[amount] )
+
+Confirmed Revenue =
+CALCULATE (
+    [Gross Revenue],
+    KEEPFILTERS ( dim_status[status] = "CONFIRMED" )
+)
+
+Cancelled Revenue =
+CALCULATE (
+    [Gross Revenue],
+    KEEPFILTERS ( dim_status[status] = "CANCELLED" )
+)
+
+Cancellation Rate =
+DIVIDE (
+    CALCULATE ( COUNTROWS ( fact_booking ), KEEPFILTERS ( dim_status[status] = "CANCELLED" ) ),
+    [Total Bookings]
+)
+
+Confirmation Rate =
+DIVIDE (
+    CALCULATE ( COUNTROWS ( fact_booking ), KEEPFILTERS ( dim_status[status] = "CONFIRMED" ) ),
+    [Total Bookings]
+)
+
+// Coverage counts distinct bookings that carry at least one payment. Counting
+// fact_payment rows instead would report 1,000 of 1,000 and read as 100%.
+Payment Coverage % =
+DIVIDE (
+    DISTINCTCOUNT ( fact_payment[booking_sk] ),
+    [Total Bookings]
+)
+
+// Per booking, not per payment: 637 bookings carry 1,000 payments.
+Avg Ticket Value per Booking =
+DIVIDE (
+    [Gross Revenue],
+    CALCULATE ( DISTINCTCOUNT ( fact_payment[booking_sk] ), NOT ISBLANK ( fact_payment[amount] ) )
+)
+
+Avg Payment = AVERAGE ( fact_payment[amount] )
+
+Bookings per Flight = DIVIDE ( [Total Bookings], [Total Flights] )
+
+// Disconnected table: no relationship, so this is a flat total, unaffected by slicers.
+Anomaly Incidences = SUM ( anomaly_summary[count] )
+
+Anomaly Rate per 100 Rows =
+DIVIDE ( [Anomaly Incidences], SUM ( dq_score[ingested] ) ) * 100
+
+Data Quality Score = AVERAGE ( dq_score[dq_score] )
+
+Rows Ingested = SUM ( dq_score[ingested] )
+
+Rows Quarantined = SUM ( dq_score[quarantined] )
+
+Rows Flagged = SUM ( dq_score[flagged] )
+
+// ---------------------------------------------------------------------------
+// Page 2 - Duration & Schedule
+// ---------------------------------------------------------------------------
+
+Overnight Flights =
+CALCULATE ( [Total Flights], KEEPFILTERS ( fact_flight[is_overnight] = TRUE ) )
+
+Red-eye Flights =
+CALCULATE ( [Total Flights], KEEPFILTERS ( fact_flight[is_red_eye] = TRUE ) )
+
+Overnight Share = DIVIDE ( [Overnight Flights], [Total Flights] )
+
+Red-eye Share = DIVIDE ( [Red-eye Flights], [Total Flights] )
+
+Corrected Flights =
+CALCULATE ( [Total Flights], KEEPFILTERS ( fact_flight[was_corrected] = TRUE ) )
+
+Min Duration (min) = MIN ( fact_flight[duration_minutes] )
+
+Max Duration (min) = MAX ( fact_flight[duration_minutes] )
+
+// Displayed as "164.7 +/- 77.4" so a route average is never read as a block time.
+Duration with Spread =
+VAR Mean = [Avg Duration (min)]
+VAR Sigma = [Duration Sigma (min)]
+RETURN
+    IF (
+        NOT ISBLANK ( Mean ),
+        FORMAT ( Mean, "0.0" ) & " +/- " & FORMAT ( Sigma, "0.0" )
+    )
+
+// ---------------------------------------------------------------------------
+// Flight-date measures - the inactive relationship
+//
+// dim_date is joined active to fact_booking[booking_date_key] because bookings
+// span twelve months and are the only usable time axis. fact_flight's
+// departure_date_key relationship is inactive and activated per measure. The
+// alternative, a second date table, was rejected: it duplicates the calendar,
+// breaks a shared slicer across pages, and gives two fields that look
+// interchangeable but are not.
+// ---------------------------------------------------------------------------
+
+Flights by Departure Date =
+CALCULATE (
+    [Total Flights],
+    USERELATIONSHIP ( dim_date[date_key], fact_flight[departure_date_key] )
+)
+
+Avg Duration by Departure Date =
+CALCULATE (
+    [Avg Duration (min)],
+    USERELATIONSHIP ( dim_date[date_key], fact_flight[departure_date_key] )
+)
+
+Red-eye Flights by Departure Date =
+CALCULATE (
+    [Red-eye Flights],
+    USERELATIONSHIP ( dim_date[date_key], fact_flight[departure_date_key] )
+)
+
+// ---------------------------------------------------------------------------
+// Page 3 - Route & Airline Performance
+// ---------------------------------------------------------------------------
+
+Route Revenue = [Gross Revenue]
+
+Route Traffic = [Total Bookings]
+
+Airline Share of Flights =
+DIVIDE (
+    [Total Flights],
+    CALCULATE ( [Total Flights], REMOVEFILTERS ( dim_airline ) )
+)
+
+Unknown Airline Flights =
+CALCULATE ( [Total Flights], KEEPFILTERS ( dim_airline[is_unknown] = TRUE ) )
+
+Route Rank by Traffic =
+RANKX ( ALLSELECTED ( dim_route[route_label] ), [Total Bookings], , DESC, DENSE )
+
+// ---------------------------------------------------------------------------
+// Page 4 - Data Quality & Anomalies
+// ---------------------------------------------------------------------------
+
+Missing Amount Payments =
+CALCULATE ( COUNTROWS ( fact_payment ), KEEPFILTERS ( fact_payment[amount_quality] = "missing" ) )
+
+Non-numeric Amount Payments =
+CALCULATE (
+    COUNTROWS ( fact_payment ),
+    KEEPFILTERS ( fact_payment[amount_quality] = "non_numeric" )
+)
+
+Unusable Amount Payments = [Missing Amount Payments] + [Non-numeric Amount Payments]
+
+Invalid Status Bookings =
+CALCULATE ( COUNTROWS ( fact_booking ), KEEPFILTERS ( dim_status[is_valid] = FALSE ) )
+
+Bookings on Quarantined Flight =
+CALCULATE ( COUNTROWS ( fact_booking ), KEEPFILTERS ( fact_booking[flight_sk] = -1 ) )
+
+Bookings without Payment =
+[Total Bookings] - DISTINCTCOUNT ( fact_payment[booking_sk] )
+
+// Row-count waterfall on page 4: raw -> retained, with the two ways rows leave.
+Rows Retained = SUM ( dq_score[retained] )
+
+Rows Collapsed = SUM ( dq_score[collapsed_duplicates] )
+
+// ---------------------------------------------------------------------------
+// Formatting
+//
+// Currency measures: format "#,0.00", no currency symbol prefix in the visual
+// title, the axis title carries "INR". Rates: percentage, 2 decimals.
+// Duration: "0.0" with " min" as the display unit in the card title.
+// ---------------------------------------------------------------------------
