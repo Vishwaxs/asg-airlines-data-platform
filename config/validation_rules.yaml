@@ -1,0 +1,201 @@
+# Declarative validation rules, interpreted by src/validate.py.
+#
+# type: not_null | regex | in_set | range | unique | referential
+# severity: error   -> row is a quarantine candidate (structurally unusable)
+#           warning -> row is flagged and retained (incomplete, not unusable)
+#
+# The nuanced business rules (duration correction, flight/passenger dedup,
+# survivorship, PII) are not expressed here — they live in src/clean.py because
+# they require row-group logic a flat rule table cannot express. This file
+# covers what can be checked one row (or one key) at a time.
+
+rules:
+  - name: flight_id_not_null
+    table: flights
+    column: flight_id
+    type: not_null
+    severity: error
+
+  - name: flight_id_format
+    table: flights
+    column: flight_id
+    type: regex
+    params:
+      pattern: "^[A-Z0-9]{2}\\d{3}$"
+    severity: error
+
+  - name: flight_route_city_valid
+    table: flights
+    column: source
+    type: in_set
+    params:
+      values: [BLR, BOM, CCU, DEL, HYD, MAA]
+    severity: error
+
+  - name: flight_destination_city_valid
+    table: flights
+    column: destination
+    type: in_set
+    params:
+      values: [BLR, BOM, CCU, DEL, HYD, MAA]
+    severity: error
+
+  - name: flight_departure_not_null
+    table: flights
+    column: departure_time
+    type: not_null
+    severity: error
+
+  - name: flight_arrival_not_null
+    table: flights
+    column: arrival_time
+    type: not_null
+    severity: error
+
+  - name: flight_airline_missing
+    table: flights
+    column: airline
+    type: not_null
+    severity: warning
+
+  - name: flight_airline_sentinel
+    table: flights
+    column: airline
+    type: in_set
+    params:
+      values: [IndiGo, SpiceJet, Air India, Vistara]
+      flag_when_outside: true
+    severity: warning
+
+  - name: booking_id_not_null
+    table: bookings
+    column: booking_id
+    type: not_null
+    severity: error
+
+  - name: booking_id_unique
+    table: bookings
+    column: booking_id
+    type: unique
+    severity: error
+
+  - name: booking_status_missing
+    table: bookings
+    column: status
+    type: not_null
+    severity: warning
+
+  - name: booking_status_sentinel
+    table: bookings
+    column: status
+    type: in_set
+    params:
+      values: [CONFIRMED, CANCELLED, PENDING]
+      flag_when_outside: true
+    severity: warning
+
+  - name: booking_flight_id_referential
+    table: bookings
+    column: flight_id
+    type: referential
+    params:
+      ref_table: flights
+      ref_column: flight_id
+    severity: error
+
+  - name: booking_passenger_id_referential
+    table: bookings
+    column: passenger_id
+    type: referential
+    params:
+      ref_table: passengers
+      ref_column: passenger_id
+    severity: error
+
+  - name: booking_passport_format
+    table: bookings
+    column: passport_number
+    type: regex
+    params:
+      pattern: "^[A-Z]\\d{7}$"
+    severity: warning
+
+  - name: booking_emergency_phone_format
+    table: bookings
+    column: emergency_contact_phone
+    type: regex
+    params:
+      pattern: "^\\+91-\\d{10}$"
+    severity: warning
+
+  - name: payment_id_not_null
+    table: payments
+    column: payment_id
+    type: not_null
+    severity: error
+
+  - name: payment_id_unique
+    table: payments
+    column: payment_id
+    type: unique
+    severity: error
+
+  - name: payment_booking_id_referential
+    table: payments
+    column: booking_id
+    type: referential
+    params:
+      ref_table: bookings
+      ref_column: booking_id
+    severity: error
+
+  - name: payment_amount_missing
+    table: payments
+    column: amount
+    type: not_null
+    severity: warning
+
+  - name: payment_method_valid
+    table: payments
+    column: payment_method
+    type: in_set
+    params:
+      values: [UPI, CARD, NETBANKING]
+    severity: warning
+
+  - name: passenger_id_not_null
+    table: passengers
+    column: passenger_id
+    type: not_null
+    severity: error
+
+  - name: passenger_last_name_missing
+    table: passengers
+    column: last_name
+    type: not_null
+    severity: warning
+
+  - name: passenger_phone_format
+    table: passengers
+    column: phone
+    type: regex
+    params:
+      pattern: "^\\+91-\\d{10}$"
+    severity: warning
+
+  - name: passenger_gender_valid
+    table: passengers
+    column: gender
+    type: in_set
+    params:
+      values: [M, F]
+    severity: warning
+
+  - name: passenger_age_range
+    table: passengers
+    column: age
+    type: range
+    params:
+      min: 0
+      max: 120
+    severity: warning

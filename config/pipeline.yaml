@@ -1,0 +1,32 @@
+source:
+  workbook: data/raw/UseCase_Airlines.xlsx
+  sheets: [flights, bookings, payments, passengers]
+
+paths:
+  bronze: data/bronze
+  silver: data/silver
+  gold: data/gold
+  quarantine: data/quarantine
+  warehouse: warehouse/asg_airlines.duckdb
+  reports: reports
+  logs: reports/logs
+  sql: sql
+
+date_dim:
+  start: "2025-04-01"
+  end: "2026-05-31"
+
+business_rules:
+  red_eye_start_hour: 22
+  red_eye_end_hour: 4
+  max_duration_hours: 24
+  age_bands:
+    - [0, 17, "0-17"]
+    - [18, 30, "18-30"]
+    - [31, 45, "31-45"]
+    - [46, 60, "46-60"]
+    - [61, 999, "60+"]
+
+pii:
+  pepper_env_var: ASG_PII_PEPPER
+  token_hex_length: 16
