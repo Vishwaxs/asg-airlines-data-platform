@@ -1,0 +1,59 @@
+2026-09-06T02:09:37 INFO     __main__: run 20260905T203937Z-5aa065 starting
+2026-09-06T02:09:37 INFO     __main__: stage ingest starting
+2026-09-06T02:09:38 INFO     src.ingest: ingested flights: 1020 rows -> C:\Users\vishw\Downloads\Airlines Use Case (1)\Airlines Use Case\asg-airlines-data-platform\data\bronze\flights.parquet
+2026-09-06T02:09:38 INFO     src.ingest: ingested bookings: 1000 rows -> C:\Users\vishw\Downloads\Airlines Use Case (1)\Airlines Use Case\asg-airlines-data-platform\data\bronze\bookings.parquet
+2026-09-06T02:09:38 INFO     src.ingest: ingested payments: 1000 rows -> C:\Users\vishw\Downloads\Airlines Use Case (1)\Airlines Use Case\asg-airlines-data-platform\data\bronze\payments.parquet
+2026-09-06T02:09:38 INFO     src.ingest: ingested passengers: 1039 rows -> C:\Users\vishw\Downloads\Airlines Use Case (1)\Airlines Use Case\asg-airlines-data-platform\data\bronze\passengers.parquet
+2026-09-06T02:09:38 INFO     __main__: stage ingest done in 0.37s: 4059 rows in, 4059 rows out, 0 quarantined
+2026-09-06T02:09:38 INFO     __main__: stage validate starting
+2026-09-06T02:09:38 INFO     src.validate: rule flight_id_not_null               [error]     0/ 1020 failed on flights.flight_id
+2026-09-06T02:09:38 INFO     src.validate: rule flight_id_format                 [error]     0/ 1020 failed on flights.flight_id
+2026-09-06T02:09:38 INFO     src.validate: rule flight_route_city_valid          [error]     0/ 1020 failed on flights.source
+2026-09-06T02:09:38 INFO     src.validate: rule flight_destination_city_valid    [error]     0/ 1020 failed on flights.destination
+2026-09-06T02:09:38 INFO     src.validate: rule flight_departure_not_null        [error]     0/ 1020 failed on flights.departure_time
+2026-09-06T02:09:38 INFO     src.validate: rule flight_arrival_not_null          [error]     0/ 1020 failed on flights.arrival_time
+2026-09-06T02:09:38 INFO     src.validate: rule flight_airline_missing           [warning]    41/ 1020 failed on flights.airline
+2026-09-06T02:09:38 INFO     src.validate: rule flight_airline_sentinel          [warning]    31/ 1020 failed on flights.airline
+2026-09-06T02:09:38 INFO     src.validate: rule booking_id_not_null              [error]     0/ 1000 failed on bookings.booking_id
+2026-09-06T02:09:38 INFO     src.validate: rule booking_id_unique                [error]     0/ 1000 failed on bookings.booking_id
+2026-09-06T02:09:38 INFO     src.validate: rule booking_status_missing           [warning]    45/ 1000 failed on bookings.status
+2026-09-06T02:09:38 INFO     src.validate: rule booking_status_sentinel          [warning]    30/ 1000 failed on bookings.status
+2026-09-06T02:09:38 INFO     src.validate: rule booking_flight_id_referential    [error]     0/ 1000 failed on bookings.flight_id
+2026-09-06T02:09:38 INFO     src.validate: rule booking_passenger_id_referential [error]     0/ 1000 failed on bookings.passenger_id
+2026-09-06T02:09:38 INFO     src.validate: rule booking_passport_format          [warning]     0/ 1000 failed on bookings.passport_number
+2026-09-06T02:09:38 INFO     src.validate: rule booking_emergency_phone_format   [warning]     0/ 1000 failed on bookings.emergency_contact_phone
+2026-09-06T02:09:38 INFO     src.validate: rule payment_id_not_null              [error]     0/ 1000 failed on payments.payment_id
+2026-09-06T02:09:38 INFO     src.validate: rule payment_id_unique                [error]     0/ 1000 failed on payments.payment_id
+2026-09-06T02:09:38 INFO     src.validate: rule payment_booking_id_referential   [error]     0/ 1000 failed on payments.booking_id
+2026-09-06T02:09:38 INFO     src.validate: rule payment_amount_missing           [warning]    48/ 1000 failed on payments.amount
+2026-09-06T02:09:38 INFO     src.validate: rule payment_method_valid             [warning]     0/ 1000 failed on payments.payment_method
+2026-09-06T02:09:38 INFO     src.validate: rule passenger_id_not_null            [error]     0/ 1039 failed on passengers.passenger_id
+2026-09-06T02:09:38 INFO     src.validate: rule passenger_last_name_missing      [warning]    10/ 1039 failed on passengers.last_name
+2026-09-06T02:09:38 INFO     src.validate: rule passenger_phone_format           [warning]     0/ 1039 failed on passengers.phone
+2026-09-06T02:09:38 INFO     src.validate: rule passenger_gender_valid           [warning]     0/ 1039 failed on passengers.gender
+2026-09-06T02:09:38 INFO     src.validate: rule passenger_age_range              [warning]     0/ 1039 failed on passengers.age
+2026-09-06T02:09:38 INFO     __main__: validation: 0 error-severity and 205 warning-severity failures
+2026-09-06T02:09:38 INFO     __main__: stage validate done in 0.04s: 4059 rows in, 4059 rows out, 0 quarantined
+2026-09-06T02:09:38 INFO     __main__: stage clean starting
+2026-09-06T02:09:38 INFO     src.clean: flights: 15 exact duplicate rows collapsed, 2 rows quarantined (6F250)
+2026-09-06T02:09:38 INFO     src.clean: passengers: 1039 rows collapsed to 1000 by survivorship
+2026-09-06T02:09:38 INFO     __main__: stage clean done in 0.15s: 4059 rows in, 4003 rows out, 2 quarantined
+2026-09-06T02:09:38 INFO     __main__: stage model starting
+2026-09-06T02:09:38 INFO     src.model: modelled dim_date: 426 rows
+2026-09-06T02:09:38 INFO     src.model: modelled dim_airline: 5 rows
+2026-09-06T02:09:38 INFO     src.model: modelled dim_route: 31 rows
+2026-09-06T02:09:38 INFO     src.model: modelled dim_status: 5 rows
+2026-09-06T02:09:38 INFO     src.model: modelled dim_passenger: 1000 rows
+2026-09-06T02:09:38 INFO     src.model: modelled fact_flight: 1004 rows
+2026-09-06T02:09:38 INFO     src.model: modelled fact_booking: 1000 rows
+2026-09-06T02:09:38 INFO     src.model: modelled fact_payment: 1000 rows
+2026-09-06T02:09:38 INFO     src.model: loaded warehouse at C:\Users\vishw\Downloads\Airlines Use Case (1)\Airlines Use Case\asg-airlines-data-platform\warehouse\asg_airlines.duckdb
+2026-09-06T02:09:38 INFO     __main__: stage model done in 0.16s: 4003 rows in, 4471 rows out, 0 quarantined
+2026-09-06T02:09:38 INFO     __main__: stage kpi starting
+2026-09-06T02:09:38 INFO     __main__: computed 11 kpi views, 16 anomaly types
+2026-09-06T02:09:38 INFO     __main__: stage kpi done in 0.11s: 4471 rows in, 123 rows out, 0 quarantined
+2026-09-06T02:09:38 INFO     __main__: stage export starting
+2026-09-06T02:09:38 INFO     src.kpi: exported 22 gold csv files to C:\Users\vishw\Downloads\Airlines Use Case (1)\Airlines Use Case\asg-airlines-data-platform\data\gold
+2026-09-06T02:09:38 INFO     src.kpi: wrote C:\Users\vishw\Downloads\Airlines Use Case (1)\Airlines Use Case\asg-airlines-data-platform\reports\data_quality_report.md
+2026-09-06T02:09:38 INFO     __main__: stage export done in 0.03s: 22 rows in, 22 rows out, 0 quarantined
+2026-09-06T02:09:38 INFO     __main__: wrote C:\Users\vishw\Downloads\Airlines Use Case (1)\Airlines Use Case\asg-airlines-data-platform\reports\run_manifest.json

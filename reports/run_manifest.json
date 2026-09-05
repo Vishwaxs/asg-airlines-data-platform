@@ -1,0 +1,129 @@
+{
+  "run_id": "20260905T203949Z-6ebee6",
+  "status": "ok",
+  "generated_at": "2026-09-05T20:39:50.455677+00:00",
+  "source_workbook": "UseCase_Airlines.xlsx",
+  "log": "20260905T203949Z-6ebee6.log",
+  "stages": [
+    {
+      "name": "ingest",
+      "started_at": "2026-09-05T20:39:49.587947+00:00",
+      "ended_at": "2026-09-05T20:39:49.958774+00:00",
+      "duration_seconds": 0.371,
+      "rows_in": 4059,
+      "rows_out": 4059,
+      "rows_quarantined": 0,
+      "status": "ok"
+    },
+    {
+      "name": "validate",
+      "started_at": "2026-09-05T20:39:49.958840+00:00",
+      "ended_at": "2026-09-05T20:39:49.995442+00:00",
+      "duration_seconds": 0.037,
+      "rows_in": 4059,
+      "rows_out": 4059,
+      "rows_quarantined": 0,
+      "status": "ok"
+    },
+    {
+      "name": "clean",
+      "started_at": "2026-09-05T20:39:49.995493+00:00",
+      "ended_at": "2026-09-05T20:39:50.133837+00:00",
+      "duration_seconds": 0.138,
+      "rows_in": 4059,
+      "rows_out": 4003,
+      "rows_quarantined": 2,
+      "status": "ok"
+    },
+    {
+      "name": "model",
+      "started_at": "2026-09-05T20:39:50.133976+00:00",
+      "ended_at": "2026-09-05T20:39:50.309567+00:00",
+      "duration_seconds": 0.176,
+      "rows_in": 4003,
+      "rows_out": 4471,
+      "rows_quarantined": 0,
+      "status": "ok"
+    },
+    {
+      "name": "kpi",
+      "started_at": "2026-09-05T20:39:50.309728+00:00",
+      "ended_at": "2026-09-05T20:39:50.425479+00:00",
+      "duration_seconds": 0.116,
+      "rows_in": 4471,
+      "rows_out": 123,
+      "rows_quarantined": 0,
+      "status": "ok"
+    },
+    {
+      "name": "export",
+      "started_at": "2026-09-05T20:39:50.425541+00:00",
+      "ended_at": "2026-09-05T20:39:50.455484+00:00",
+      "duration_seconds": 0.03,
+      "rows_in": 22,
+      "rows_out": 22,
+      "rows_quarantined": 0,
+      "status": "ok"
+    }
+  ],
+  "rows_ingested": {
+    "flights": 1020,
+    "bookings": 1000,
+    "payments": 1000,
+    "passengers": 1039
+  },
+  "rows_modelled": {
+    "dim_date": 426,
+    "dim_airline": 5,
+    "dim_route": 31,
+    "dim_status": 5,
+    "dim_passenger": 1000,
+    "fact_flight": 1004,
+    "fact_booking": 1000,
+    "fact_payment": 1000
+  },
+  "quarantined": {
+    "flights": 2
+  },
+  "anomalies": {
+    "negative_duration": 1,
+    "uncorrectable_duration": 0,
+    "missing_airline": 41,
+    "sentinel_airline": 31,
+    "exact_duplicate": 15,
+    "conflicting_duplicate_key": 2,
+    "missing_status": 45,
+    "sentinel_status": 30,
+    "booking_on_quarantined_flight": 2,
+    "missing_amount": 48,
+    "non_numeric_amount": 30,
+    "missing_last_name": 10,
+    "aadhaar_length_anomaly": 114,
+    "duplicate_passenger_id": 75,
+    "booking_without_payment": 363,
+    "flight_without_booking": 20
+  },
+  "duration_reconciliation": {
+    "source_parseable": 1020,
+    "mismatch_before_correction": 1,
+    "mismatch_after_correction": 0,
+    "max_abs_delta_before": 1440.0,
+    "max_abs_delta_after": 0.005000000000002558
+  },
+  "headline": {
+    "flights": 1003.0,
+    "bookings": 1000.0,
+    "passengers": 1000.0,
+    "avg_duration_minutes": 164.67,
+    "stddev_duration_minutes": 77.39,
+    "gross_revenue": 7385142.98,
+    "confirmed_revenue": 2471402.04,
+    "cancellation_rate_pct": 31.4,
+    "confirmation_rate_pct": 32.0,
+    "payment_coverage_pct": 63.7,
+    "avg_ticket_value_per_booking": 11593.63,
+    "bookings_per_flight": 0.997,
+    "red_eye_share_pct": 27.02,
+    "overnight_share_pct": 12.16
+  }
+}

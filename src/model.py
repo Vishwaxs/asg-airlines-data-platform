@@ -5,7 +5,6 @@ import logging
 import duckdb
 import pandas as pd
 
-from src.clean import CleanResult
 from src.config import Config
 
 logger = logging.getLogger(__name__)
@@ -152,8 +151,7 @@ def build_fact_payment(payments: pd.DataFrame, fact_booking: pd.DataFrame) -> pd
     ]
 
 
-def build_model(result: CleanResult, config: Config) -> dict[str, pd.DataFrame]:
-    silver = result.silver
+def build_model(silver: dict[str, pd.DataFrame], config: Config) -> dict[str, pd.DataFrame]:
     dim_date = build_dim_date(config)
     dim_airline = build_dim_airline(silver["flights"])
     dim_route = build_dim_route(silver["flights"])

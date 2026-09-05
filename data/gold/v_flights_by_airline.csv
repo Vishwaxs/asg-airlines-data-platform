@@ -1,0 +1,6 @@
+airline_name,is_unknown,flights,share_pct,avg_duration_minutes,stddev_duration_minutes
+IndiGo,False,249,24.83,167.7,80.72
+SpiceJet,False,236,23.53,164.19,77.43
+Air India,False,233,23.23,163.15,74.21
+Vistara,False,218,21.73,162.68,77.99
+UNKNOWN,True,67,6.68,166.9,75.36

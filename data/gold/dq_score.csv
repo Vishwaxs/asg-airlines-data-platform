@@ -1,0 +1,5 @@
+table,ingested,flagged,quarantined,collapsed_duplicates,retained,dq_score
+flights,1020,68,2,15,1003,0.9314
+bookings,1000,75,0,0,1000,0.925
+payments,1000,78,0,0,1000,0.922
+passengers,1039,107,0,39,1000,0.897

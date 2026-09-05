@@ -1,0 +1,6 @@
+airline_key,airline_name,is_unknown
+1,Air India,False
+2,IndiGo,False
+3,SpiceJet,False
+4,UNKNOWN,True
+5,Vistara,False

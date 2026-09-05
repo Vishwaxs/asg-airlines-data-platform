@@ -1,6 +1,15 @@
 source:
   workbook: data/raw/UseCase_Airlines.xlsx
   sheets: [flights, bookings, payments, passengers]
+  # A missing sheet or a missing column here fails the run immediately: the
+  # pipeline can quarantine a bad row, but it cannot infer a column that is
+  # not there, and a silent partial load is worse than a stopped one.
+  required_columns:
+    flights: [flight_id, airline, source, destination, departure_time, arrival_time, duration]
+    bookings: [booking_id, passenger_id, flight_id, booking_date, status, seat_number]
+    payments: [payment_id, booking_id, amount, payment_method]
+    passengers: [passenger_id, first_name, last_name, age, gender, email, phone, aadhaar_id,
+                 date_of_birth]
 
 paths:
   bronze: data/bronze

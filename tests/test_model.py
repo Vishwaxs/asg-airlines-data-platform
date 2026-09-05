@@ -20,7 +20,7 @@ def config():
 def model(config):
     tables = ingest(config, run_id="pytest-model")
     flagged, _ = validate(tables)
-    return build_model(clean(flagged, config), config)
+    return build_model(clean(flagged, config).silver, config)
 
 
 def test_fact_booking_keeps_every_booking(model):

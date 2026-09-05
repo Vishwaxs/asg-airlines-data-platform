@@ -39,6 +39,9 @@ def ingest(config: Config, run_id: str) -> dict[str, pd.DataFrame]:
     tables: dict[str, pd.DataFrame] = {}
     for sheet in config.sheets:
         df = pd.read_excel(xl, sheet)
+        absent = [c for c in config.required_columns[sheet] if c not in df.columns]
+        if absent:
+            raise ValueError(f"sheet {sheet} is missing required column(s): {absent}")
         if sheet == "flights":
             # duration mixes datetime.time and one datetime.datetime (Excel's
             # negative-time artefact on SJ192) in the same object column -

@@ -36,6 +36,7 @@ class Paths:
 @dataclass
 class Config:
     sheets: list[str]
+    required_columns: dict[str, list[str]]
     paths: Paths
     date_start: str
     date_end: str
@@ -84,6 +85,7 @@ def load_config(path: str | Path = ROOT / "config" / "pipeline.yaml") -> Config:
 
     return Config(
         sheets=raw["source"]["sheets"],
+        required_columns=raw["source"]["required_columns"],
         paths=paths,
         date_start=raw["date_dim"]["start"],
         date_end=raw["date_dim"]["end"],

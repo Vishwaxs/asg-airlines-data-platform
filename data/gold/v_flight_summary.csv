@@ -1,0 +1,2 @@
+flights,avg_duration_minutes,stddev_duration_minutes,min_duration_minutes,max_duration_minutes,overnight_flights,red_eye_flights,corrected_flights
+1003,164.67,77.39,30.0,300.0,122.0,271.0,1.0
