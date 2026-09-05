@@ -185,8 +185,11 @@ def write_dq_report(
         "",
         anomalies.to_markdown(index=False),
         "",
-        f"Total anomaly incidences: {total_anomalies:,} across {total_ingested:,} ingested rows "
-        f"({100.0 * total_anomalies / total_ingested:.2f} per 100 rows). A single row can carry",
+        (
+            f"Total anomaly incidences: {total_anomalies:,} across {total_ingested:,} ingested "
+            f"rows ({100.0 * total_anomalies / total_ingested:.2f} per 100 rows). A single row "
+            "can carry"
+        ),
         "more than one anomaly, so this is an incidence rate, not a share of rows.",
         "",
         "## Duration reconciliation",
@@ -195,10 +198,14 @@ def write_dq_report(
         "column, which is treated as an independent witness rather than as the authoritative value.",
         "",
         f"- source values parseable: {recon['source_parseable']} of {ingested['flights']}",
-        f"- mismatches before correction: {recon['mismatch_before_correction']} "
-        f"(max absolute delta {recon['max_abs_delta_before']:.0f} minutes)",
-        f"- mismatches after correction: {recon['mismatch_after_correction']} "
-        f"(max absolute delta {recon['max_abs_delta_after']:.3f} minutes)",
+        (
+            f"- mismatches before correction: {recon['mismatch_before_correction']} "
+            f"(max absolute delta {recon['max_abs_delta_before']:.0f} minutes)"
+        ),
+        (
+            f"- mismatches after correction: {recon['mismatch_after_correction']} "
+            f"(max absolute delta {recon['max_abs_delta_after']:.3f} minutes)"
+        ),
         "",
         "The single pre-correction mismatch is SJ192, off by exactly 1,440 minutes - one day. The",
         "raw duration column reads 05:00:00 for that row and the rolled-forward arrival gives",
@@ -209,8 +216,10 @@ def write_dq_report(
         f"- flights modelled: {int(headline['flights']):,}",
         f"- bookings modelled: {int(headline['bookings']):,}",
         f"- passengers modelled: {int(headline['passengers']):,}",
-        f"- average duration: {headline['avg_duration_minutes']:.2f} minutes "
-        f"(sigma {headline['stddev_duration_minutes']:.2f})",
+        (
+            f"- average duration: {headline['avg_duration_minutes']:.2f} minutes "
+            f"(sigma {headline['stddev_duration_minutes']:.2f})"
+        ),
         f"- gross revenue: {headline['gross_revenue']:,.2f}",
         f"- confirmed revenue: {headline['confirmed_revenue']:,.2f}",
         f"- cancellation rate: {headline['cancellation_rate_pct']:.2f}%",
@@ -218,9 +227,12 @@ def write_dq_report(
         "",
         "## Passenger survivorship",
         "",
-        f"{len(result.survivorship)} candidate rows across "
-        f"{result.survivorship['passenger_id'].nunique()} duplicated passenger ids were resolved to "
-        "one surviving row each. Every candidate and the reason its winner was chosen is in",
+        (
+            f"{len(result.survivorship)} candidate rows across "
+            f"{result.survivorship['passenger_id'].nunique()} duplicated passenger ids were "
+            "resolved to one surviving row each. Every candidate and the reason its winner was "
+            "chosen is in"
+        ),
         "`reports/passenger_survivorship.csv`. Selection order: fewest nulls, then a full 12-digit",
         "Aadhaar, then the lexicographically smallest email. No group was resolved by row order.",
         "",

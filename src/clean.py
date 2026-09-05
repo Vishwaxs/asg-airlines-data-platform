@@ -108,7 +108,6 @@ def clean_flights(df: pd.DataFrame, config: Config) -> tuple[pd.DataFrame, pd.Da
     # being silently picked.
     dup_ids = flights.loc[flights["flight_id"].duplicated(keep=False), "flight_id"].unique()
     hash_per_id = flights.groupby("flight_id")["_row_hash"].nunique()
-    exact_dup_ids = [fid for fid in dup_ids if hash_per_id[fid] == 1]
     conflicting_ids = [fid for fid in dup_ids if hash_per_id[fid] > 1]
 
     conflicting = flights["flight_id"].isin(conflicting_ids)
