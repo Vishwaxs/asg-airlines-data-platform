@@ -1,67 +1,17 @@
 {
-  "run_id": "20260905T204853Z-121446",
+  "run_id": "20260905T205437Z-c1a716",
   "status": "ok",
-  "generated_at": "2026-09-05T20:48:54.778911+00:00",
+  "generated_at": "2026-09-05T20:54:37.689308+00:00",
   "source_workbook": "UseCase_Airlines.xlsx",
-  "log": "20260905T204853Z-121446.log",
+  "log": "20260905T205437Z-c1a716.log",
   "stages": [
     {
-      "name": "ingest",
-      "started_at": "2026-09-05T20:48:53.842693+00:00",
-      "ended_at": "2026-09-05T20:48:54.257715+00:00",
-      "duration_seconds": 0.415,
-      "rows_in": 4059,
-      "rows_out": 4059,
-      "rows_quarantined": 0,
-      "status": "ok"
-    },
-    {
-      "name": "validate",
-      "started_at": "2026-09-05T20:48:54.257782+00:00",
-      "ended_at": "2026-09-05T20:48:54.295324+00:00",
-      "duration_seconds": 0.038,
-      "rows_in": 4059,
-      "rows_out": 4059,
-      "rows_quarantined": 0,
-      "status": "ok"
-    },
-    {
-      "name": "clean",
-      "started_at": "2026-09-05T20:48:54.295378+00:00",
-      "ended_at": "2026-09-05T20:48:54.435093+00:00",
-      "duration_seconds": 0.14,
-      "rows_in": 4059,
-      "rows_out": 4003,
-      "rows_quarantined": 2,
-      "status": "ok"
-    },
-    {
-      "name": "model",
-      "started_at": "2026-09-05T20:48:54.435242+00:00",
-      "ended_at": "2026-09-05T20:48:54.621487+00:00",
-      "duration_seconds": 0.186,
-      "rows_in": 4003,
-      "rows_out": 4471,
-      "rows_quarantined": 0,
-      "status": "ok"
-    },
-    {
       "name": "kpi",
-      "started_at": "2026-09-05T20:48:54.621683+00:00",
-      "ended_at": "2026-09-05T20:48:54.732732+00:00",
-      "duration_seconds": 0.111,
+      "started_at": "2026-09-05T20:54:37.287229+00:00",
+      "ended_at": "2026-09-05T20:54:37.689056+00:00",
+      "duration_seconds": 0.402,
       "rows_in": 4471,
       "rows_out": 123,
-      "rows_quarantined": 0,
-      "status": "ok"
-    },
-    {
-      "name": "export",
-      "started_at": "2026-09-05T20:48:54.732835+00:00",
-      "ended_at": "2026-09-05T20:48:54.778680+00:00",
-      "duration_seconds": 0.046,
-      "rows_in": 22,
-      "rows_out": 22,
       "rows_quarantined": 0,
       "status": "ok"
     }
