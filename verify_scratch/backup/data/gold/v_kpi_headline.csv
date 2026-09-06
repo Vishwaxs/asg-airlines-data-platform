@@ -1,0 +1,2 @@
+flights,bookings,passengers,avg_duration_minutes,stddev_duration_minutes,gross_revenue,confirmed_revenue,cancellation_rate_pct,confirmation_rate_pct,payment_coverage_pct,avg_ticket_value_per_booking,bookings_per_flight,red_eye_share_pct,overnight_share_pct
+1003,1000,1000,164.67,77.39,7385142.98,2471402.04,31.4,32.0,63.7,11593.63,0.997,27.02,12.16

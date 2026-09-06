@@ -1,0 +1,6 @@
+status,is_valid,bookings,share_pct
+CONFIRMED,True,320,32.0
+CANCELLED,True,314,31.4
+PENDING,True,291,29.1
+UNKNOWN,False,45,4.5
+INVALID,False,30,3.0

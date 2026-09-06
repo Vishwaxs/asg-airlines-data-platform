@@ -1,0 +1,4 @@
+amount_quality,payments,share_pct,amount
+valid,922,92.2,7385142.98
+missing,48,4.8,
+non_numeric,30,3.0,

@@ -1,0 +1,17 @@
+anomaly,scope_table,count,scope_rows,rate_pct
+aadhaar_length_anomaly,passengers,114,1039,10.972
+booking_on_quarantined_flight,bookings,2,1000,0.2
+booking_without_payment,bookings,363,1000,36.3
+conflicting_duplicate_key,flights,2,1020,0.196
+duplicate_passenger_id,passengers,75,1039,7.218
+exact_duplicate,flights,15,1020,1.471
+flight_without_booking,flights,20,1020,1.961
+missing_airline,flights,41,1020,4.02
+missing_amount,payments,48,1000,4.8
+missing_last_name,passengers,10,1039,0.962
+missing_status,bookings,45,1000,4.5
+negative_duration,flights,1,1020,0.098
+non_numeric_amount,payments,30,1000,3.0
+sentinel_airline,flights,31,1020,3.039
+sentinel_status,bookings,30,1000,3.0
+uncorrectable_duration,flights,0,1020,0.0
